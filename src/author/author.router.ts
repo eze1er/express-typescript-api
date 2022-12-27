@@ -4,7 +4,7 @@ import { body, validationResult } from "express-validator";
 
 import * as AuthorService from "./author.services";
 
-import { request } from "http";
+// import { request } from "http";
 
 export const authorRouter = express.Router();
 
@@ -19,16 +19,70 @@ authorRouter.get("/", async (request: Request, response: Response) => {
 });
 
 // GET: A single author by ID
-authorRouter.get("/:id", async (request:Request, response: Response) => {
+authorRouter.get("/:id", async (request: Request, response: Response) => {
   const id: number = parseInt(request.params.id, 10);
   try {
-    const author = await AuthorService.getAuthor(id)
+    const author = await AuthorService.getAuthor(id);
     if (author) {
-      return response.status(200).json(author)
-    } 
-    return response.status(404).json("Author could not be found")
+      return response.status(200).json(author);
+    }
+    return response.status(404).json("Author could not be found");
   } catch (error: any) {
     return response.status(500).json(error.message);
-
   }
-})
+});
+
+//  POST: create a Author
+//  Params: firstName, lastName
+authorRouter.post(
+  "/",
+  body("firstName").isString(),
+  body("lastName").isString(),
+  async (request: Request, response: Response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const author = request.body;
+      const newAuthor = await AuthorService.createAuthor(author);
+      return response.status(200).json(newAuthor);
+    } catch (error: any) {
+      return response.status(500).json(error.message);
+    }
+  }
+);
+
+// POST: Updating an Author
+// Params: firstName, lastName
+
+authorRouter.put(
+  "/:id",
+  body("firstName").isString(),
+  body("lastName").isString(),
+  async (request: Request, response: Response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
+    const id: number = parseInt(request.params.id, 10);
+    try {
+      const author = request.body;
+      const updateAuthor = await AuthorService.updateAuthor(author, id);
+      return response.status(200).json(updateAuthor);
+    } catch (error: any) {
+      return response.status(500).json(error.message);
+    }
+  }
+);
+
+// DELETE: Delete an Author base on the id
+authorRouter.delete("/:id", async (request: Request, response: Response) => {
+  const id: number = parseInt(request.params.id, 10);
+  try {
+    await AuthorService.deleteAuthor(id);
+    return response.status(204).json("Author has been successfully deleted");
+  } catch (error: any) {
+    return response.status(500).json(error.message);
+  }
+});

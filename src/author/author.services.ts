@@ -49,6 +49,19 @@ id: number): Promise<Author> => {
     data: {
       firstName,
       lastName,
-    }
+    },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+    },
+  })
+} 
+
+export const deleteAuthor = async(id: number): Promise<void> => {
+  await db.author.delete({
+    where: {
+      id,
+    },
   })
 } 
