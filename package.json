@@ -27,7 +27,8 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "zod": "^3.20.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
